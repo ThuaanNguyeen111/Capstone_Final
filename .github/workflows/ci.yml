@@ -1,0 +1,36 @@
+name: Nexus Core CI & Security
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  code-quality-and-pentest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Yêu cầu bắt buộc để Strix quét được sự thay đổi của code (diff)
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # Cài đặt công cụ Strix Pentester
+      - name: Install Strix
+        run: curl -sSL https://strix.ai/install | bash
+
+      # Chạy quét bảo mật AI tự động với Gemini PRO
+      - name: AI Security Pentest (Strix)
+        env:
+          STRIX_LLM: vertex_ai/gemini-3-pro-preview
+          LLM_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: strix -n -t ./ --scan-mode quick --scope-mode diff --diff-base origin/main
