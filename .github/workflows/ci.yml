@@ -24,13 +24,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      # Cài đặt công cụ Strix Pentester
       - name: Install Strix
         run: curl -sSL https://strix.ai/install | bash
 
-      # Chạy quét bảo mật AI tự động với Gemini PRO
       - name: AI Security Pentest (Strix)
         env:
-          STRIX_LLM: vertex_ai/gemini-3-pro-preview
+          STRIX_LLM: gemini/gemini-3.5-Flash
           LLM_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: strix -n -t ./ --scan-mode quick --scope-mode diff --diff-base origin/main
