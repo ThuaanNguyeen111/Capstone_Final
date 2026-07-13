@@ -29,6 +29,6 @@ jobs:
 
       - name: AI Security Pentest (Strix)
         env:
-          STRIX_LLM: gemini/gemini-2.0-flash
+          STRIX_LLM: gemini/gemini-2.5-flash
           LLM_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: strix -n -t ./ --scan-mode quick --scope-mode diff --diff-base origin/main
